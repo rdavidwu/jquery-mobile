@@ -36,7 +36,8 @@ $.widget( "mobile.panel", $.mobile.widget, {
 		display: "reveal", //accepts reveal, push, overlay
 		initSelector: ":jqmData(role='panel')",
 		swipeClose: true,
-		positionFixed: false
+		positionFixed: false,
+		darkModal: false
 	},
 
 	_panelID: null,
@@ -168,7 +169,7 @@ $.widget( "mobile.panel", $.mobile.widget, {
 			panelInnerHeight = self._panelInner.outerHeight(),
 			expand = panelInnerHeight > $.mobile.getScreenHeight();
 
-		if ( expand || !self.options.positionFixed ) {
+		if ( (expand || !self.options.positionFixed) && (self.options.position !== 'top' )) {
 			if ( expand ) {
 				self._unfixPanel();
 				$.mobile.resetActivePageHeight( panelInnerHeight );
@@ -244,7 +245,13 @@ $.widget( "mobile.panel", $.mobile.widget, {
 				area.on( "swipeleft.panel", function( e ) {
 					self.close();
 				});
-			} else {
+			}
+			else if(self.options.position === "top"){
+				self._modal.on("scrollstart.panel", function(e){
+					self.close();
+				});
+			}
+			else {
 				area.on( "swiperight.panel", function( e ) {
 					self.close();
 				});
@@ -316,9 +323,24 @@ $.widget( "mobile.panel", $.mobile.widget, {
 						.addClass( self._fixedToolbarOpenClasses + " " + o.classes.contentFixedToolbarOpen );
 						
 					self._modalOpenClasses = self._getPosDisplayClasses( o.classes.modal ) + " " + o.classes.modalOpen;
+					
+					if(self.options.darkModal){
+						 //add an opacity transition
+						self._modal.removeClass('background-bright').addClass('background-opaque');	
+					}
+
 					if ( self._modal ) {
 						self._modal.addClass( self._modalOpenClasses );
 					}
+					
+					//block scrolling when swipe occurs while top panel is open
+					if(self.options.position === "top"){
+						var area = self._modal ? self.element.add( self._modal ) : self.element;					
+						area.on('touchmove.panel', function(e){
+							e.preventDefault();
+						});					
+					}
+					
 				},
 				complete = function() {
 					self.element.add( self._wrapper ).off( self._transitionEndEvents, complete );
@@ -368,6 +390,12 @@ $.widget( "mobile.panel", $.mobile.widget, {
 					if ( self._modal ) {
 						self._modal.removeClass( self._modalOpenClasses );
 					}
+					
+					if( self.options.darkModal){
+						//remove opacity transition
+						self._modal.removeClass('background-opaque').addClass('background-bright');	
+ 					}
+ 					
 				},
 				complete = function() {
 					if ( self.options.theme && self.options.display !== "overlay" ) {

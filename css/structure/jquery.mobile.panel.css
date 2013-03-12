@@ -234,7 +234,7 @@
 /* panel top */
 
 /* position of the top panel */
-.ui-panel.ui-panel-position-top{
+.ui-panel-position-top{
 	width:100%;
 	min-height: 0;
 	min-width: 100%;
@@ -255,12 +255,6 @@
 /* top panel when closed */
 .ui-panel-position-top.ui-panel-closed{
 	height: 0;
-	overflow:hidden;
-}
-
-/* top panel inner padding */
-.ui-panel-position-top .ui-panel-inner{
-	padding: 15px;
 }
 
 .ui-page-active.ui-page-panel{
@@ -338,7 +332,6 @@
 	-moz-transform: translate3d(0,5em,0);
 	transform: translate3d(0,5em,0);
 }
-
 
 /* styling to make the modal dark with opacity */
 .background-opaque{

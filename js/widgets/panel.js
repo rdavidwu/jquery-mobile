@@ -27,7 +27,9 @@ $.widget( "mobile.panel", $.mobile.widget, {
 			contentFixedToolbar: "ui-panel-content-fixed-toolbar",
 			contentFixedToolbarOpen: "ui-panel-content-fixed-toolbar-open",
 			contentFixedToolbarClosed: "ui-panel-content-fixed-toolbar-closed",
-			animate: "ui-panel-animate"
+			animate: "ui-panel-animate",
+			modalOpaque: "background-opaque",
+			modalBright: "background-bright"
 		},
 		animate: true,
 		theme: "c",
@@ -107,6 +109,11 @@ $.widget( "mobile.panel", $.mobile.widget, {
 			this.element.addClass( self.options.classes.animate );
 		}
 		
+		//set fixed position if panel is on top
+		if ( self.options.position == 'top' ){
+			self.options.positionFixed = 'true';
+		}
+
 		self._bindUpdateLayout();
 		self._bindCloseEvents();
 		self._bindLinkListeners();
@@ -169,7 +176,7 @@ $.widget( "mobile.panel", $.mobile.widget, {
 			panelInnerHeight = self._panelInner.outerHeight(),
 			expand = panelInnerHeight > $.mobile.getScreenHeight();
 
-		if ( (expand || !self.options.positionFixed) && (self.options.position !== 'top' )) {
+		if ( expand || !self.options.positionFixed ) {
 			if ( expand ) {
 				self._unfixPanel();
 				$.mobile.resetActivePageHeight( panelInnerHeight );
@@ -245,13 +252,12 @@ $.widget( "mobile.panel", $.mobile.widget, {
 				area.on( "swipeleft.panel", function( e ) {
 					self.close();
 				});
-			}
-			else if(self.options.position === "top"){
-				self._modal.on("scrollstart.panel", function(e){
+			} else if( self.options.position === "top" ){
+				self._modal.on( "scrollstart.panel", function( e ){
+					e.preventDefault();		//prevent scrolling
 					self.close();
 				});
-			}
-			else {
+			} else {
 				area.on( "swiperight.panel", function( e ) {
 					self.close();
 				});
@@ -324,23 +330,13 @@ $.widget( "mobile.panel", $.mobile.widget, {
 						
 					self._modalOpenClasses = self._getPosDisplayClasses( o.classes.modal ) + " " + o.classes.modalOpen;
 					
-					if(self.options.darkModal){
-						 //add an opacity transition
-						self._modal.removeClass('background-bright').addClass('background-opaque');	
-					}
-
 					if ( self._modal ) {
 						self._modal.addClass( self._modalOpenClasses );
+						if( self.options.darkModal ){
+							 //add an opacity transition		
+							self._modal.removeClass( o.classes.modalBright ).addClass( o.classes.modalOpaque );
+						}
 					}
-					
-					//block scrolling when swipe occurs while top panel is open
-					if(self.options.position === "top"){
-						var area = self._modal ? self.element.add( self._modal ) : self.element;					
-						area.on('touchmove.panel', function(e){
-							e.preventDefault();
-						});					
-					}
-					
 				},
 				complete = function() {
 					self.element.add( self._wrapper ).off( self._transitionEndEvents, complete );
@@ -388,14 +384,12 @@ $.widget( "mobile.panel", $.mobile.widget, {
 					self._fixedToolbar.removeClass( o.classes.contentFixedToolbarOpen );
 					
 					if ( self._modal ) {
-						self._modal.removeClass( self._modalOpenClasses );
+						if( self.options.darkModal ){
+							//remove opacity transition
+							self._modal.removeClass( o.classes.modalOpaque );
+						}
+							self._modal.removeClass( self._modalOpenClasses ).addClass( o.classes.modalBright );
 					}
-					
-					if( self.options.darkModal){
-						//remove opacity transition
-						self._modal.removeClass('background-opaque').addClass('background-bright');	
- 					}
- 					
 				},
 				complete = function() {
 					if ( self.options.theme && self.options.display !== "overlay" ) {

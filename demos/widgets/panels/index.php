@@ -11,7 +11,6 @@
 	<script src="../../../js/jquery.js"></script>
 	<script src="../../_assets/js/"></script>
 	<script src="../../../js/"></script> 
-
 </head>
 <body>
 <div data-role="page" class="jqm-demos" data-quicklinks="true">
@@ -247,15 +246,13 @@ $( "#mypanel" ).trigger( "updatelayout" );
 	<div data-role="panel" id="toppanel1" data-position="top" data-display="overlay" data-theme="a">
 
         <h3>Top Panel: Overlay</h3>
-        <a href="#demo-links" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true">Close panel</a>
 
 	</div><!-- /toppanel1 -->
-	
+
 	<!-- toppanel2  -->
 	<div data-role="panel" id="toppanel2" data-position="top" data-display="push" data-theme="a" data-dark-modal="true">
 
         <h3>Top Panel: Push</h3>
-        <a href="#demo-links" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true">Close panel</a>
 
 	</div><!-- /toppanel2 -->	
 
